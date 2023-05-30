@@ -1,0 +1,19 @@
+{
+	"name": "AzureBlobStorageOnline",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": "https://azurementoringstorageok.blob.core.windows.net/online",
+			"sasToken": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "AzureKeyVault1",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "BlobSasUriOnline"
+			}
+		}
+	}
+}

@@ -1,0 +1,189 @@
+{
+	"name": "PopulateDimTables",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DB_MoviesT_tMovies",
+						"type": "DatasetReference"
+					},
+					"name": "TMovies"
+				},
+				{
+					"dataset": {
+						"referenceName": "DB_MoviesT_tMovieStatus",
+						"type": "DatasetReference"
+					},
+					"name": "TMovieStatus"
+				},
+				{
+					"dataset": {
+						"referenceName": "DB_MoviesT_tOnlineService",
+						"type": "DatasetReference"
+					},
+					"name": "TOnlineService"
+				},
+				{
+					"dataset": {
+						"referenceName": "DB_DataMartT_DimMovie",
+						"type": "DatasetReference"
+					},
+					"name": "DimMovieSrc",
+					"description": "Import data from DB_DataMartT_DimMovie"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DB_DataMartT_DimMovie",
+						"type": "DatasetReference"
+					},
+					"name": "DimMovie"
+				},
+				{
+					"dataset": {
+						"referenceName": "DB_DataMartT_DimOnlineService",
+						"type": "DatasetReference"
+					},
+					"name": "DimOnlineService"
+				}
+			],
+			"transformations": [
+				{
+					"name": "join"
+				},
+				{
+					"name": "AddCurrentDateTime1",
+					"description": "Creating CurrentDateTime column"
+				},
+				{
+					"name": "AddCurrentDateTime2"
+				},
+				{
+					"name": "AlterRow1"
+				},
+				{
+					"name": "join1"
+				}
+			],
+			"scriptLines": [
+				"source(output(",
+				"          MovieId as integer,",
+				"          MovieIdNK as integer,",
+				"          Budget as integer,",
+				"          HomepagePath as string,",
+				"          Title as string,",
+				"          OriginalTitle as string,",
+				"          ReleaseDate as date,",
+				"          Revenue as long,",
+				"          Runtime as integer,",
+				"          MovieStatusId as integer,",
+				"          AvgVote as decimal(3,1),",
+				"          CreatedDate as timestamp,",
+				"          ModifiedDate as timestamp,",
+				"          SrcFileName as string",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     enableCdc: true,",
+				"     mode: 'read',",
+				"     skipInitialLoad: true,",
+				"     waterMarkColumn: 'ModifiedDate',",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> TMovies",
+				"source(output(",
+				"          MovieStatusId as integer,",
+				"          MovieStatusName as string,",
+				"          CreatedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     limit: 100,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> TMovieStatus",
+				"source(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     format: 'table') ~> TOnlineService",
+				"source(output(",
+				"          MovieKey as integer,",
+				"          MovieIdNK as integer,",
+				"          Title as string,",
+				"          ReleaseDate as date,",
+				"          Runtime as integer,",
+				"          MovieStatus as string,",
+				"          CreatedDate as timestamp,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     isolationLevel: 'READ_UNCOMMITTED',",
+				"     query: '  SELECT MovieIdNK, CreatedDate\\n  FROM [dbo].[DimMovie]',",
+				"     format: 'query') ~> DimMovieSrc",
+				"join1, TMovieStatus join(TMovies@MovieStatusId == TMovieStatus@MovieStatusId,",
+				"     joinType:'inner',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join",
+				"join derive(CurrentDateTime = currentTimestamp(),",
+				"          CreateDate = coalesce(DimMovieSrc@CreatedDate, currentTimestamp())) ~> AddCurrentDateTime1",
+				"TOnlineService derive(CreatedDate = currentTimestamp(),",
+				"          ModifiedDate = currentTimestamp()) ~> AddCurrentDateTime2",
+				"AddCurrentDateTime1 alterRow(updateIf(TMovies@MovieIdNK==DimMovieSrc@MovieIdNK),",
+				"     insertIf(isNull(DimMovieSrc@MovieIdNK))) ~> AlterRow1",
+				"TMovies, DimMovieSrc join(TMovies@MovieIdNK == DimMovieSrc@MovieIdNK,",
+				"     joinType:'left',",
+				"     matchType:'exact',",
+				"     ignoreSpaces: false,",
+				"     broadcast: 'auto')~> join1",
+				"AlterRow1 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          MovieKey as integer,",
+				"          MovieIdNK as integer,",
+				"          Title as string,",
+				"          ReleaseDate as date,",
+				"          Runtime as integer,",
+				"          MovieStatus as string,",
+				"          CreatedDate as timestamp,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:true,",
+				"     upsertable:false,",
+				"     keys:['MovieIdNK'],",
+				"     format: 'table',",
+				"     dateFormat:'yyyy-MM-dd',",
+				"     errorHandlingOption: 'stopOnFirstError',",
+				"     mapColumn(",
+				"          MovieIdNK = TMovies@MovieIdNK,",
+				"          Title = TMovies@Title,",
+				"          ReleaseDate = TMovies@ReleaseDate,",
+				"          Runtime = TMovies@Runtime,",
+				"          MovieStatus = MovieStatusName,",
+				"          CreatedDate = CreateDate,",
+				"          ModifiedDate = CurrentDateTime",
+				"     )) ~> DimMovie",
+				"AddCurrentDateTime2 sink(allowSchemaDrift: true,",
+				"     validateSchema: false,",
+				"     input(",
+				"          ServiceKey as integer,",
+				"          ServiceCode as string,",
+				"          ServiceName as string,",
+				"          CreatedDate as timestamp,",
+				"          ModifiedDate as timestamp",
+				"     ),",
+				"     deletable:false,",
+				"     insertable:true,",
+				"     updateable:false,",
+				"     upsertable:false,",
+				"     truncate:true,",
+				"     format: 'table',",
+				"     errorHandlingOption: 'stopOnFirstError') ~> DimOnlineService"
+			]
+		}
+	}
+}

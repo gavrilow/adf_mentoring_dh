@@ -1,0 +1,63 @@
+{
+	"name": "MainOnline",
+	"properties": {
+		"activities": [
+			{
+				"name": "Copy Files from Blob to DL",
+				"type": "ExecutePipeline",
+				"dependsOn": [],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "DeltaCopyOnline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Populate DB",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Copy Files from Blob to DL",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "DL2MoviesDBOnline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			},
+			{
+				"name": "Archive",
+				"type": "ExecutePipeline",
+				"dependsOn": [
+					{
+						"activity": "Populate DB",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"pipeline": {
+						"referenceName": "ArchiveOnline",
+						"type": "PipelineReference"
+					},
+					"waitOnCompletion": true
+				}
+			}
+		],
+		"annotations": [],
+		"lastPublishTime": "2023-04-09T17:30:18Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
