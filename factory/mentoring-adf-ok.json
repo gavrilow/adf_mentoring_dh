@@ -1,0 +1,17 @@
+{
+	"name": "mentoring-adf-ok",
+	"properties": {
+		"globalParameters": {
+			"SecretURIValue": {
+				"type": "string",
+				"value": "https://mentoring-key-vault-ok.vault.azure.net/secrets/EmailURL/dda9b860869d4bffa510db74456949ac"
+			}
+		}
+	},
+	"location": "francecentral",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "1a90de72-2f0c-4174-a5c4-da6798bb5b68",
+		"tenantId": "b41b72d0-4e9f-4c26-8a69-f949f367c91d"
+	}
+}

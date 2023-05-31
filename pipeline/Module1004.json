@@ -1,0 +1,45 @@
+{
+	"name": "Module1004",
+	"properties": {
+		"activities": [
+			{
+				"name": "GetProperties",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT file_name1,\n      container_name,\n      folder_name,\n      destination_table,\n      schema_name,\n      column_delimiter,\nrow_delimiter,\n      DIU,\nmapping,\n\t  CONCAT(schema_name,'.',destination_table) as schema_table\t  \n  FROM etl.tControlMetadata\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DB_Movies_Parametrizated",
+						"type": "DatasetReference",
+						"parameters": {
+							"table_name": "tControlMetadata",
+							"schema_name": "etl"
+						}
+					},
+					"firstRowOnly": false
+				}
+			}
+		],
+		"variables": {
+			"Test": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-05-11T20:49:55Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}
