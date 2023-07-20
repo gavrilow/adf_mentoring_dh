@@ -5,15 +5,7 @@
 		"annotations": [],
 		"type": "AzureBlobFS",
 		"typeProperties": {
-			"sasUri": "https://azurementoringdatalakeok.dfs.core.windows.net/",
-			"sasToken": {
-				"type": "AzureKeyVaultSecret",
-				"store": {
-					"referenceName": "AzureKeyVault1",
-					"type": "LinkedServiceReference"
-				},
-				"secretName": "moviesSink"
-			}
+			"url": "https://azurementoringdatalakedh.dfs.core.windows.net"
 		}
 	}
 }
