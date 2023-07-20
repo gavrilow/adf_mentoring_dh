@@ -19,20 +19,7 @@
 			"firstRowAsHeader": true,
 			"quoteChar": "\""
 		},
-		"schema": [
-			{
-				"name": "cast",
-				"type": "String"
-			},
-			{
-				"name": "crew",
-				"type": "String"
-			},
-			{
-				"name": "id",
-				"type": "String"
-			}
-		]
+		"schema": []
 	},
 	"type": "Microsoft.DataFactory/factories/datasets"
 }
