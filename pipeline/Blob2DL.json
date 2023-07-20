@@ -53,13 +53,13 @@
 				},
 				"inputs": [
 					{
-						"referenceName": "BlobStorage",
+						"referenceName": "source",
 						"type": "DatasetReference"
 					}
 				],
 				"outputs": [
 					{
-						"referenceName": "DLStorage",
+						"referenceName": "sink",
 						"type": "DatasetReference"
 					}
 				]
