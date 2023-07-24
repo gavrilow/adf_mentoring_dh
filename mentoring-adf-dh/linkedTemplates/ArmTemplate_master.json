@@ -1,0 +1,216 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "mentoring-adf-dh"
+		},
+		"AzureSqlDataMart_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDataMart'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=azure-mentoring-ok.database.windows.net;Initial Catalog=DataMart;User ID=oleksandrkulbida"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"type": "secureString",
+			"metadata": "Secure string for 'connectionString' of 'AzureSqlDatabase1'",
+			"defaultValue": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=azure-mentoring-ok.database.windows.net;Initial Catalog=movies;User ID=oleksandrkulbida"
+		},
+		"AzureBlobStorage_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage'"
+		},
+		"AzureBlobStorage1_properties_typeProperties_sasUri_secretName": {
+			"type": "string",
+			"defaultValue": "secret-mentoring-azure-blob-storage-dh"
+		},
+		"AzureBlobStorage2_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage2'"
+		},
+		"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
+			"type": "string",
+			"defaultValue": "ratingsSource1"
+		},
+		"AzureBlobStorageOnline_sasUri": {
+			"type": "secureString",
+			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorageOnline'"
+		},
+		"AzureBlobStorageOnline_properties_typeProperties_sasToken_secretName": {
+			"type": "string",
+			"defaultValue": "BlobSasUriOnline"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://azurementoringdatalakedh.dfs.core.windows.net"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://mentoring-key-vault-ok.vault.azure.net/"
+		},
+		"SqlServerCinemaTickets_properties_typeProperties_connectionString_secretName": {
+			"type": "string",
+			"defaultValue": "SqlServerCinemaTicketsLink"
+		},
+		"SqlServerCinemaTickets_properties_typeProperties_userName": {
+			"type": "string",
+			"defaultValue": "EPAM\\Oleksandr_Kulbida1"
+		},
+		"mentoring_azure_blob_storage_dh_properties_typeProperties_sasUri_secretName": {
+			"type": "string",
+			"defaultValue": "secret-mentoring-azure-blob-storage-dh"
+		},
+		"mentoring_key_vault_dh_properties_typeProperties_baseUrl": {
+			"type": "string",
+			"defaultValue": "https://mentoring-key-vault-dh.vault.azure.net/"
+		},
+		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart": {
+			"type": "string",
+			"defaultValue": "@{addhours(trigger().scheduledTime, -24)}"
+		},
+		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd": {
+			"type": "string",
+			"defaultValue": "@trigger().scheduledTime"
+		},
+		"containerUri": {
+			"type": "string",
+			"metadata": "URI to storage account containing linked ARM templates"
+		},
+		"containerSasToken": {
+			"type": "string",
+			"metadata": "Sas token to storage account containing linked ARM templates"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "mentoring-adf-dh_ArmTemplate_0",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_0.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureBlobStorage_sasUri": {
+						"value": "[parameters('AzureBlobStorage_sasUri')]"
+					},
+					"AzureDataLakeStorage1_properties_typeProperties_url": {
+						"value": "[parameters('AzureDataLakeStorage1_properties_typeProperties_url')]"
+					},
+					"AzureKeyVault1_properties_typeProperties_baseUrl": {
+						"value": "[parameters('AzureKeyVault1_properties_typeProperties_baseUrl')]"
+					},
+					"mentoring_key_vault_dh_properties_typeProperties_baseUrl": {
+						"value": "[parameters('mentoring_key_vault_dh_properties_typeProperties_baseUrl')]"
+					}
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "mentoring-adf-dh_ArmTemplate_1",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_1.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"AzureSqlDataMart_connectionString": {
+						"value": "[parameters('AzureSqlDataMart_connectionString')]"
+					},
+					"AzureSqlDatabase1_connectionString": {
+						"value": "[parameters('AzureSqlDatabase1_connectionString')]"
+					},
+					"AzureBlobStorage1_properties_typeProperties_sasUri_secretName": {
+						"value": "[parameters('AzureBlobStorage1_properties_typeProperties_sasUri_secretName')]"
+					},
+					"AzureBlobStorage2_sasUri": {
+						"value": "[parameters('AzureBlobStorage2_sasUri')]"
+					},
+					"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
+						"value": "[parameters('AzureBlobStorage2_properties_typeProperties_sasToken_secretName')]"
+					},
+					"AzureBlobStorageOnline_sasUri": {
+						"value": "[parameters('AzureBlobStorageOnline_sasUri')]"
+					},
+					"AzureBlobStorageOnline_properties_typeProperties_sasToken_secretName": {
+						"value": "[parameters('AzureBlobStorageOnline_properties_typeProperties_sasToken_secretName')]"
+					},
+					"SqlServerCinemaTickets_properties_typeProperties_connectionString_secretName": {
+						"value": "[parameters('SqlServerCinemaTickets_properties_typeProperties_connectionString_secretName')]"
+					},
+					"SqlServerCinemaTickets_properties_typeProperties_userName": {
+						"value": "[parameters('SqlServerCinemaTickets_properties_typeProperties_userName')]"
+					},
+					"mentoring_azure_blob_storage_dh_properties_typeProperties_sasUri_secretName": {
+						"value": "[parameters('mentoring_azure_blob_storage_dh_properties_typeProperties_sasUri_secretName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'mentoring-adf-dh_ArmTemplate_0')]"
+			]
+		},
+		{
+			"name": "mentoring-adf-dh_ArmTemplate_2",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_2.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					},
+					"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart": {
+						"value": "[parameters('Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart')]"
+					},
+					"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd": {
+						"value": "[parameters('Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'mentoring-adf-dh_ArmTemplate_1')]"
+			]
+		},
+		{
+			"name": "mentoring-adf-dh_ArmTemplate_3",
+			"type": "Microsoft.Resources/deployments",
+			"apiVersion": "2018-02-01",
+			"properties": {
+				"mode": "incremental",
+				"templateLink": {
+					"uri": "[concat(parameters('containerUri'), '/ArmTemplate_3.json', parameters('containerSasToken'))]",
+					"contentVersion": "1.0.0.0"
+				},
+				"parameters": {
+					"factoryName": {
+						"value": "[parameters('factoryName')]"
+					}
+				}
+			},
+			"dependsOn": [
+				"[resourceId('Microsoft.Resources/deployments', 'mentoring-adf-dh_ArmTemplate_2')]"
+			]
+		}
+	]
+}

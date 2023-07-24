@@ -1,0 +1,57 @@
+{
+	"$schema": "https://schema.management.azure.com/schemas/2015-01-01/deploymentParameters.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"value": "mentoring-adf-dh"
+		},
+		"AzureSqlDataMart_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=azure-mentoring-ok.database.windows.net;Initial Catalog=DataMart;User ID=oleksandrkulbida"
+		},
+		"AzureSqlDatabase1_connectionString": {
+			"value": "Integrated Security=False;Encrypt=True;Connection Timeout=30;Data Source=azure-mentoring-ok.database.windows.net;Initial Catalog=movies;User ID=oleksandrkulbida"
+		},
+		"AzureBlobStorage_sasUri": {
+			"value": ""
+		},
+		"AzureBlobStorage1_properties_typeProperties_sasUri_secretName": {
+			"value": "secret-mentoring-azure-blob-storage-dh"
+		},
+		"AzureBlobStorage2_sasUri": {
+			"value": ""
+		},
+		"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
+			"value": "ratingsSource1"
+		},
+		"AzureBlobStorageOnline_sasUri": {
+			"value": ""
+		},
+		"AzureBlobStorageOnline_properties_typeProperties_sasToken_secretName": {
+			"value": "BlobSasUriOnline"
+		},
+		"AzureDataLakeStorage1_properties_typeProperties_url": {
+			"value": "https://azurementoringdatalakedh.dfs.core.windows.net"
+		},
+		"AzureKeyVault1_properties_typeProperties_baseUrl": {
+			"value": "https://mentoring-key-vault-ok.vault.azure.net/"
+		},
+		"SqlServerCinemaTickets_properties_typeProperties_connectionString_secretName": {
+			"value": "SqlServerCinemaTicketsLink"
+		},
+		"SqlServerCinemaTickets_properties_typeProperties_userName": {
+			"value": "EPAM\\Oleksandr_Kulbida1"
+		},
+		"mentoring_azure_blob_storage_dh_properties_typeProperties_sasUri_secretName": {
+			"value": "secret-mentoring-azure-blob-storage-dh"
+		},
+		"mentoring_key_vault_dh_properties_typeProperties_baseUrl": {
+			"value": "https://mentoring-key-vault-dh.vault.azure.net/"
+		},
+		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart": {
+			"value": "@{addhours(trigger().scheduledTime, -24)}"
+		},
+		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd": {
+			"value": "@trigger().scheduledTime"
+		}
+	}
+}
