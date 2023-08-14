@@ -10,7 +10,8 @@
 		"typeProperties": {
 			"location": {
 				"type": "AzureBlobStorageLocation",
-				"container": "module04"
+				"folderPath": "module04",
+				"container": "ratings"
 			},
 			"columnDelimiter": ",",
 			"encodingName": "UTF-8",
