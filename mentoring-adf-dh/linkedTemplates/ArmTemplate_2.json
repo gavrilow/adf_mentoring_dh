@@ -68,8 +68,7 @@
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "module04"
+						"type": "AzureBlobStorageLocation"
 					},
 					"columnDelimiter": ",",
 					"encodingName": "UTF-8",

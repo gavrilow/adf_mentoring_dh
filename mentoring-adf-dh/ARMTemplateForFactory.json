@@ -31,7 +31,7 @@
 		},
 		"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
 			"type": "string",
-			"defaultValue": "ratingsSource1"
+			"defaultValue": "secret-blob-au-new"
 		},
 		"AzureBlobStorageOnline_sasUri": {
 			"type": "secureString",
@@ -4664,8 +4664,7 @@
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation",
-						"container": "module04"
+						"type": "AzureBlobStorageLocation"
 					},
 					"columnDelimiter": ",",
 					"encodingName": "UTF-8",
@@ -4879,7 +4878,7 @@
 					"sasToken": {
 						"type": "AzureKeyVaultSecret",
 						"store": {
-							"referenceName": "AzureKeyVault1",
+							"referenceName": "mentoring_key_vault_dh",
 							"type": "LinkedServiceReference"
 						},
 						"secretName": "[parameters('AzureBlobStorage2_properties_typeProperties_sasToken_secretName')]"
@@ -4887,7 +4886,7 @@
 				}
 			},
 			"dependsOn": [
-				"[concat(variables('factoryId'), '/linkedServices/AzureKeyVault1')]"
+				"[concat(variables('factoryId'), '/linkedServices/mentoring_key_vault_dh')]"
 			]
 		},
 		{

@@ -27,7 +27,7 @@
 		},
 		"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
 			"type": "string",
-			"defaultValue": "ratingsSource1"
+			"defaultValue": "secret-blob-au-new"
 		},
 		"AzureBlobStorageOnline_sasUri": {
 			"type": "secureString",
@@ -86,7 +86,7 @@
 					"sasToken": {
 						"type": "AzureKeyVaultSecret",
 						"store": {
-							"referenceName": "AzureKeyVault1",
+							"referenceName": "mentoring_key_vault_dh",
 							"type": "LinkedServiceReference"
 						},
 						"secretName": "[parameters('AzureBlobStorage2_properties_typeProperties_sasToken_secretName')]"

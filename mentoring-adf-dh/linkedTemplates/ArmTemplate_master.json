@@ -31,7 +31,7 @@
 		},
 		"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
 			"type": "string",
-			"defaultValue": "ratingsSource1"
+			"defaultValue": "secret-blob-au-new"
 		},
 		"AzureBlobStorageOnline_sasUri": {
 			"type": "secureString",
