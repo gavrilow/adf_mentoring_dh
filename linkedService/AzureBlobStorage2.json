@@ -5,14 +5,14 @@
 		"annotations": [],
 		"type": "AzureBlobStorage",
 		"typeProperties": {
-			"sasUri": "https://azurementoringauok.blob.core.windows.net/",
+			"sasUri": "https://azurementoringaudh.blob.core.windows.net/",
 			"sasToken": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
-					"referenceName": "AzureKeyVault1",
+					"referenceName": "mentoring_key_vault_dh",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "ratingsSource1"
+				"secretName": "secret-blob-au-new"
 			}
 		}
 	}
