@@ -60,14 +60,6 @@
 		"mentoring_key_vault_dh_properties_typeProperties_baseUrl": {
 			"type": "string",
 			"defaultValue": "https://mentoring-key-vault-dh.vault.azure.net/"
-		},
-		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart": {
-			"type": "string",
-			"defaultValue": "@{addhours(trigger().scheduledTime, -24)}"
-		},
-		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd": {
-			"type": "string",
-			"defaultValue": "@trigger().scheduledTime"
 		}
 	},
 	"variables": {
@@ -4879,107 +4871,6 @@
 				}
 			},
 			"dependsOn": []
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/Trigger_hg0')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "DeltaCopyOnlineScheduled",
-							"type": "PipelineReference"
-						},
-						"parameters": {
-							"windowStart": "[parameters('Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart')]",
-							"windowEnd": "[parameters('Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd')]"
-						}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Hour",
-						"interval": 24,
-						"startTime": "2023-04-03T21:24:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/DeltaCopyOnlineScheduled')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/dailyTrigger')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Stopped",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "IncrementalCopyPipeline",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2023-03-27T01:08:00",
-						"timeZone": "FLE Standard Time",
-						"schedule": {
-							"minutes": [
-								9
-							],
-							"hours": [
-								3
-							]
-						}
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/IncrementalCopyPipeline')]"
-			]
-		},
-		{
-			"name": "[concat(parameters('factoryName'), '/trigger1')]",
-			"type": "Microsoft.DataFactory/factories/triggers",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"annotations": [],
-				"runtimeState": "Started",
-				"pipelines": [
-					{
-						"pipelineReference": {
-							"referenceName": "copy",
-							"type": "PipelineReference"
-						},
-						"parameters": {}
-					}
-				],
-				"type": "ScheduleTrigger",
-				"typeProperties": {
-					"recurrence": {
-						"frequency": "Day",
-						"interval": 1,
-						"startTime": "2023-07-17T13:35:00Z",
-						"timeZone": "UTC"
-					}
-				}
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/pipelines/copy')]"
-			]
 		},
 		{
 			"name": "[concat(parameters('factoryName'), '/Azure-IR-M8')]",

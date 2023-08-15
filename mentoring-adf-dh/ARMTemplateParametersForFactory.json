@@ -43,12 +43,6 @@
 		},
 		"mentoring_key_vault_dh_properties_typeProperties_baseUrl": {
 			"value": "https://mentoring-key-vault-dh.vault.azure.net/"
-		},
-		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart": {
-			"value": "@{addhours(trigger().scheduledTime, -24)}"
-		},
-		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd": {
-			"value": "@trigger().scheduledTime"
 		}
 	}
 }

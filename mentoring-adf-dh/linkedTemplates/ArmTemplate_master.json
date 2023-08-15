@@ -61,14 +61,6 @@
 			"type": "string",
 			"defaultValue": "https://mentoring-key-vault-dh.vault.azure.net/"
 		},
-		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart": {
-			"type": "string",
-			"defaultValue": "@{addhours(trigger().scheduledTime, -24)}"
-		},
-		"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd": {
-			"type": "string",
-			"defaultValue": "@trigger().scheduledTime"
-		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -172,12 +164,6 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
-					},
-					"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart": {
-						"value": "[parameters('Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowStart')]"
-					},
-					"Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd": {
-						"value": "[parameters('Trigger_hg0_properties_DeltaCopyOnlineScheduled_parameters_windowEnd')]"
 					}
 				}
 			},
