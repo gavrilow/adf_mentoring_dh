@@ -6,6 +6,10 @@
 		"type": "AzureBlobFS",
 		"typeProperties": {
 			"url": "https://azurementoringdatalakedh.dfs.core.windows.net"
+		},
+		"connectVia": {
+			"referenceName": "AzureEastAustraliaIR",
+			"type": "IntegrationRuntimeReference"
 		}
 	}
 }
