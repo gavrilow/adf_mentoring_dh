@@ -21,6 +21,51 @@
 	},
 	"resources": [
 		{
+			"name": "[concat(parameters('factoryName'), '/DB_MoviesT_tOnlineService')]",
+			"type": "Microsoft.DataFactory/factories/datasets",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				},
+				"annotations": [],
+				"type": "AzureSqlTable",
+				"schema": [
+					{
+						"name": "ServiceId",
+						"type": "int",
+						"precision": 10
+					},
+					{
+						"name": "ServiceCode",
+						"type": "nvarchar"
+					},
+					{
+						"name": "ServiceName",
+						"type": "nvarchar"
+					},
+					{
+						"name": "CreatedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					},
+					{
+						"name": "ModifiedDate",
+						"type": "datetime",
+						"precision": 23,
+						"scale": 3
+					}
+				],
+				"typeProperties": {
+					"schema": "dbo",
+					"table": "tOnlineService"
+				}
+			},
+			"dependsOn": []
+		},
+		{
 			"name": "[concat(parameters('factoryName'), '/DB_Movies_Parametrizated')]",
 			"type": "Microsoft.DataFactory/factories/datasets",
 			"apiVersion": "2018-06-01",
@@ -2846,177 +2891,6 @@
 			]
 		},
 		{
-			"name": "[concat(parameters('factoryName'), '/Module0906_copy1')]",
-			"type": "Microsoft.DataFactory/factories/pipelines",
-			"apiVersion": "2018-06-01",
-			"properties": {
-				"activities": [
-					{
-						"name": "ForEach1",
-						"type": "ForEach",
-						"dependsOn": [
-							{
-								"activity": "GetProperties",
-								"dependencyConditions": [
-									"Succeeded"
-								]
-							}
-						],
-						"userProperties": [],
-						"typeProperties": {
-							"items": {
-								"value": "@activity('GetProperties').output.value",
-								"type": "Expression"
-							},
-							"isSequential": false,
-							"batchCount": 3,
-							"activities": [
-								{
-									"name": "PopulateDB",
-									"type": "Copy",
-									"dependsOn": [],
-									"policy": {
-										"timeout": "0.12:00:00",
-										"retry": 0,
-										"retryIntervalInSeconds": 30,
-										"secureOutput": false,
-										"secureInput": false
-									},
-									"userProperties": [],
-									"typeProperties": {
-										"source": {
-											"type": "DelimitedTextSource",
-											"additionalColumns": [
-												{
-													"name": "source_filename",
-													"value": "$$FILEPATH"
-												},
-												{
-													"name": "pipelineId",
-													"value": {
-														"value": "@pipeline().RunId",
-														"type": "Expression"
-													}
-												}
-											],
-											"storeSettings": {
-												"type": "AzureBlobFSReadSettings",
-												"recursive": false,
-												"wildcardFolderPath": {
-													"value": "@item().folder_name",
-													"type": "Expression"
-												},
-												"wildcardFileName": {
-													"value": "@item().file_name",
-													"type": "Expression"
-												},
-												"enablePartitionDiscovery": false
-											},
-											"formatSettings": {
-												"type": "DelimitedTextReadSettings"
-											}
-										},
-										"sink": {
-											"type": "AzureSqlSink",
-											"preCopyScript": {
-												"value": "@{concat('TRUNCATE TABLE ', item().schema_table)}",
-												"type": "Expression"
-											},
-											"writeBehavior": "insert",
-											"sqlWriterUseTableLock": false,
-											"disableMetricsCollection": false
-										},
-										"enableStaging": false,
-										"dataIntegrationUnits": {
-											"value": "@item().DIU",
-											"type": "Expression"
-										},
-										"translator": {
-											"value": "@json(string(item().mapping))",
-											"type": "Expression"
-										}
-									},
-									"inputs": [
-										{
-											"referenceName": "DLStorageParametrizated",
-											"type": "DatasetReference",
-											"parameters": {
-												"column_delimiter": "@item().column_delimiter",
-												"row_delimiter": {
-													"value": "@item().row_delimiter",
-													"type": "Expression"
-												}
-											}
-										}
-									],
-									"outputs": [
-										{
-											"referenceName": "DB_Movies_Parametrizated",
-											"type": "DatasetReference",
-											"parameters": {
-												"table_name": {
-													"value": "@item().destination_table",
-													"type": "Expression"
-												},
-												"schema_name": {
-													"value": "@item().schema_name",
-													"type": "Expression"
-												}
-											}
-										}
-									]
-								}
-							]
-						}
-					},
-					{
-						"name": "GetProperties",
-						"type": "Lookup",
-						"dependsOn": [],
-						"policy": {
-							"timeout": "0.12:00:00",
-							"retry": 0,
-							"retryIntervalInSeconds": 30,
-							"secureOutput": false,
-							"secureInput": false
-						},
-						"userProperties": [],
-						"typeProperties": {
-							"source": {
-								"type": "AzureSqlSource",
-								"sqlReaderQuery": "SELECT file_name,\n      container_name,\n      folder_name,\n      destination_table,\n      schema_name,\n      column_delimiter,\nrow_delimiter,\n      DIU,\nmapping,\n\t  CONCAT(schema_name,'.',destination_table) as schema_table\t  \n  FROM etl.tControlMetadata\n",
-								"queryTimeout": "02:00:00",
-								"partitionOption": "None"
-							},
-							"dataset": {
-								"referenceName": "DB_Movies_Parametrizated",
-								"type": "DatasetReference",
-								"parameters": {
-									"table_name": "tControlMetadata",
-									"schema_name": "etl"
-								}
-							},
-							"firstRowOnly": false
-						}
-					}
-				],
-				"policy": {
-					"elapsedTimeMetric": {},
-					"cancelAfter": {}
-				},
-				"variables": {
-					"Test": {
-						"type": "String"
-					}
-				},
-				"annotations": [],
-				"lastPublishTime": "2023-05-09T17:19:57Z"
-			},
-			"dependsOn": [
-				"[concat(variables('factoryId'), '/datasets/DB_Movies_Parametrizated')]"
-			]
-		},
-		{
 			"name": "[concat(parameters('factoryName'), '/Module1004')]",
 			"type": "Microsoft.DataFactory/factories/pipelines",
 			"apiVersion": "2018-06-01",
@@ -3386,7 +3260,9 @@
 					]
 				}
 			},
-			"dependsOn": []
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/datasets/DB_MoviesT_tOnlineService')]"
+			]
 		}
 	]
 }
