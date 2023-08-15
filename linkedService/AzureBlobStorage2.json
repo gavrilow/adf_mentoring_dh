@@ -1,19 +1,18 @@
 {
 	"name": "AzureBlobStorage2",
-	"type": "Microsoft.DataFactory/factories/linkedservices",
 	"properties": {
 		"annotations": [],
 		"type": "AzureBlobStorage",
 		"typeProperties": {
-			"sasUri": "https://azurementoringaudh.blob.core.windows.net/",
-			"sasToken": {
+			"sasUri": {
 				"type": "AzureKeyVaultSecret",
 				"store": {
 					"referenceName": "mentoring_key_vault_dh",
 					"type": "LinkedServiceReference"
 				},
-				"secretName": "secret-blob-au-new"
+				"secretName": "secret-ratings"
 			}
 		}
-	}
+	},
+	"type": "Microsoft.DataFactory/factories/linkedservices"
 }
