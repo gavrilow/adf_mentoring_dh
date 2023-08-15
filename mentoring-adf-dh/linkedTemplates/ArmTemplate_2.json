@@ -68,7 +68,8 @@
 				"type": "DelimitedText",
 				"typeProperties": {
 					"location": {
-						"type": "AzureBlobStorageLocation"
+						"type": "AzureBlobStorageLocation",
+						"container": "ratings"
 					},
 					"columnDelimiter": ",",
 					"encodingName": "UTF-8",

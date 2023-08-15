@@ -17,11 +17,8 @@
 		"AzureBlobStorage1_properties_typeProperties_sasUri_secretName": {
 			"value": "secret-mentoring-azure-blob-storage-dh"
 		},
-		"AzureBlobStorage2_sasUri": {
-			"value": ""
-		},
-		"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
-			"value": "secret-blob-au-new"
+		"AzureBlobStorage2_properties_typeProperties_sasUri_secretName": {
+			"value": "secret-ratings"
 		},
 		"AzureBlobStorageOnline_sasUri": {
 			"value": ""

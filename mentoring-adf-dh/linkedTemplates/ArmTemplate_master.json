@@ -25,13 +25,9 @@
 			"type": "string",
 			"defaultValue": "secret-mentoring-azure-blob-storage-dh"
 		},
-		"AzureBlobStorage2_sasUri": {
-			"type": "secureString",
-			"metadata": "Secure string for 'sasUri' of 'AzureBlobStorage2'"
-		},
-		"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
+		"AzureBlobStorage2_properties_typeProperties_sasUri_secretName": {
 			"type": "string",
-			"defaultValue": "secret-blob-au-new"
+			"defaultValue": "secret-ratings"
 		},
 		"AzureBlobStorageOnline_sasUri": {
 			"type": "secureString",
@@ -139,11 +135,8 @@
 					"AzureBlobStorage1_properties_typeProperties_sasUri_secretName": {
 						"value": "[parameters('AzureBlobStorage1_properties_typeProperties_sasUri_secretName')]"
 					},
-					"AzureBlobStorage2_sasUri": {
-						"value": "[parameters('AzureBlobStorage2_sasUri')]"
-					},
-					"AzureBlobStorage2_properties_typeProperties_sasToken_secretName": {
-						"value": "[parameters('AzureBlobStorage2_properties_typeProperties_sasToken_secretName')]"
+					"AzureBlobStorage2_properties_typeProperties_sasUri_secretName": {
+						"value": "[parameters('AzureBlobStorage2_properties_typeProperties_sasUri_secretName')]"
 					},
 					"AzureBlobStorageOnline_sasUri": {
 						"value": "[parameters('AzureBlobStorageOnline_sasUri')]"
