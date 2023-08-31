@@ -1,0 +1,821 @@
+{
+	"name": "Module0906",
+	"properties": {
+		"activities": [
+			{
+				"name": "ForEach1",
+				"type": "ForEach",
+				"dependsOn": [
+					{
+						"activity": "GetProperties",
+						"dependencyConditions": [
+							"Succeeded"
+						]
+					}
+				],
+				"userProperties": [],
+				"typeProperties": {
+					"items": {
+						"value": "@activity('GetProperties').output.value",
+						"type": "Expression"
+					},
+					"isSequential": false,
+					"batchCount": 3,
+					"activities": [
+						{
+							"name": "PopulateDB",
+							"type": "Copy",
+							"dependsOn": [],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"source": {
+									"type": "DelimitedTextSource",
+									"additionalColumns": [
+										{
+											"name": "source_filename",
+											"value": "$$FILEPATH"
+										},
+										{
+											"name": "pipelineId",
+											"value": {
+												"value": "@pipeline().RunId",
+												"type": "Expression"
+											}
+										}
+									],
+									"storeSettings": {
+										"type": "AzureBlobFSReadSettings",
+										"recursive": false,
+										"wildcardFolderPath": {
+											"value": "@item().folder_name",
+											"type": "Expression"
+										},
+										"wildcardFileName": {
+											"value": "@item().file_name",
+											"type": "Expression"
+										},
+										"enablePartitionDiscovery": false
+									},
+									"formatSettings": {
+										"type": "DelimitedTextReadSettings"
+									}
+								},
+								"sink": {
+									"type": "AzureSqlSink",
+									"preCopyScript": {
+										"value": "@{concat('TRUNCATE TABLE ', item().schema_table)}",
+										"type": "Expression"
+									},
+									"writeBehavior": "insert",
+									"sqlWriterUseTableLock": false,
+									"disableMetricsCollection": false
+								},
+								"enableStaging": false,
+								"dataIntegrationUnits": {
+									"value": "@item().DIU",
+									"type": "Expression"
+								},
+								"translator": {
+									"value": "@json(string(item().mapping))",
+									"type": "Expression"
+								}
+							},
+							"inputs": [
+								{
+									"referenceName": "DLStorageParametrizated",
+									"type": "DatasetReference",
+									"parameters": {
+										"column_delimiter": "@item().column_delimiter",
+										"row_delimiter": {
+											"value": "@item().row_delimiter",
+											"type": "Expression"
+										}
+									}
+								}
+							],
+							"outputs": [
+								{
+									"referenceName": "DB_Movies_Parametrizated",
+									"type": "DatasetReference",
+									"parameters": {
+										"table_name": {
+											"value": "@item().destination_table",
+											"type": "Expression"
+										},
+										"schema_name": {
+											"value": "@item().schema_name",
+											"type": "Expression"
+										}
+									}
+								}
+							]
+						},
+						{
+							"name": "spPopulatePipelineInfoAndStats",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "PopulateDB",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[spPopulatePipelineInfoAndStats]",
+								"storedProcedureParameters": {
+									"copied_rows": {
+										"value": {
+											"value": "@activity('PopulateDB').output.rowsCopied",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"parallel_copies": {
+										"value": {
+											"value": "@activity('PopulateDB').output.usedParallelCopies",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"pipeline_guid": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"activity_name": {
+										"value": "PopulateDB",
+										"type": "String"
+									},
+									"processed_files": {
+										"value": {
+											"value": "@activity('PopulateDB').output.filesRead",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"read_rows": {
+										"value": {
+											"value": "@activity('PopulateDB').output.rowsRead",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"used_DIU": {
+										"value": {
+											"value": "@activity('PopulateDB').output.usedDataIntegrationUnits",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"activity": {
+										"value": "Copy data",
+										"type": "String"
+									},
+									"pipeline_name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"activity_guid": {
+										"value": {
+											"value": "@activity('PopulateDB').ActivityRunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "spPopulateExecutionDetails",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "spPopulatePipelineInfoAndStats",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[spPopulateExecutionDetails]",
+								"storedProcedureParameters": {
+									"activity_guid": {
+										"value": {
+											"value": "@activity('PopulateDB').ActivityRunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"copy_duration": {
+										"value": {
+											"value": "@activity('PopulateDB').output.executionDetails[0].duration",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"end_time": {
+										"value": {
+											"value": "@addToTime(activity('PopulateDB').output.executionDetails[0].start, activity('PopulateDB').output.executionDetails[0].duration, 'Second')",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"queue_duration": {
+										"value": {
+											"value": "@activity('PopulateDB').output.executionDetails[0].profile.queue.duration",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									},
+									"start_time": {
+										"value": {
+											"value": "@activity('PopulateDB').output.executionDetails[0].start",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"status": {
+										"value": {
+											"value": "@activity('PopulateDB').output.executionDetails[0].status",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"transfer_duration": {
+										"value": {
+											"value": "@activity('PopulateDB').output.executionDetails[0].profile.transfer.duration",
+											"type": "Expression"
+										},
+										"type": "Int32"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "spBillingInfo",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "spPopulatePipelineInfoAndStats",
+									"dependencyConditions": [
+										"Succeeded"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[spBillingInfo]",
+								"storedProcedureParameters": {
+									"activity_guid": {
+										"value": {
+											"value": "@activity('PopulateDB').ActivityRunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"duration": {
+										"value": {
+											"value": "@activity('PopulateDB').output.billingReference.billableDuration[0].duration",
+											"type": "Expression"
+										},
+										"type": "Decimal"
+									},
+									"meter_type": {
+										"value": {
+											"value": "@activity('PopulateDB').output.billingReference.billableDuration[0].meterType",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"unit": {
+										"value": {
+											"value": "@activity('PopulateDB').output.billingReference.billableDuration[0].unit",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "ErrorHandler_PopulateDB",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "PopulateDB",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[spPopulateErrorHandlerAndPipelineInfo]",
+								"storedProcedureParameters": {
+									"activity": {
+										"value": "Copy data",
+										"type": "String"
+									},
+									"activity_guid": {
+										"value": {
+											"value": "@activity('PopulateDB').ActivityRunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"activity_name": {
+										"value": "PopulateDB",
+										"type": "String"
+									},
+									"datetime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"error_code": {
+										"value": {
+											"value": "@activity('PopulateDB').error.errorCode",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"error_message": {
+										"value": {
+											"value": "@activity('PopulateDB').error.Message",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"failure_type": {
+										"value": {
+											"value": "@activity('PopulateDB').error.failureType",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pipeline_guid": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"pipeline_name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "ErrorHandler_spPopulatePipelineInfoAndStats",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "spPopulatePipelineInfoAndStats",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[spPopulateErrorHandlerAndPipelineInfo]",
+								"storedProcedureParameters": {
+									"activity": {
+										"value": "Stored procedure",
+										"type": "String"
+									},
+									"activity_guid": {
+										"value": {
+											"value": "@activity('spPopulatePipelineInfoAndStats').ActivityRunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"activity_name": {
+										"value": "spPopulatePipelineInfoAndStats",
+										"type": "String"
+									},
+									"datetime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"error_code": {
+										"value": {
+											"value": "@activity('spPopulatePipelineInfoAndStats').error.errorCode",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"error_message": {
+										"value": {
+											"value": "@activity('spPopulatePipelineInfoAndStats').error.Message",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"failure_type": {
+										"value": {
+											"value": "@activity('spPopulatePipelineInfoAndStats').error.failureType",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pipeline_guid": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"pipeline_name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "ErrorHandler_spPopulateExecutionDetails",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "spPopulateExecutionDetails",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[spPopulateErrorHandlerAndPipelineInfo]",
+								"storedProcedureParameters": {
+									"activity": {
+										"value": "Stored procedure",
+										"type": "String"
+									},
+									"activity_guid": {
+										"value": {
+											"value": "@activity('spPopulateExecutionDetails').ActivityRunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"activity_name": {
+										"value": "spPopulateExecutionDetails",
+										"type": "String"
+									},
+									"datetime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"error_code": {
+										"value": {
+											"value": "@activity('spPopulateExecutionDetails').error.errorCode",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"error_message": {
+										"value": {
+											"value": "@activity('spPopulateExecutionDetails').error.Message",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"failure_type": {
+										"value": {
+											"value": "@activity('spPopulateExecutionDetails').error.failureType",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pipeline_guid": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"pipeline_name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							}
+						},
+						{
+							"name": "ErrorHandler_spBillingInfo",
+							"type": "SqlServerStoredProcedure",
+							"dependsOn": [
+								{
+									"activity": "spBillingInfo",
+									"dependencyConditions": [
+										"Failed"
+									]
+								}
+							],
+							"policy": {
+								"timeout": "0.12:00:00",
+								"retry": 0,
+								"retryIntervalInSeconds": 30,
+								"secureOutput": false,
+								"secureInput": false
+							},
+							"userProperties": [],
+							"typeProperties": {
+								"storedProcedureName": "[etl].[spPopulateErrorHandlerAndPipelineInfo]",
+								"storedProcedureParameters": {
+									"activity": {
+										"value": "Stored procedure",
+										"type": "String"
+									},
+									"activity_guid": {
+										"value": {
+											"value": "@activity('spBillingInfo').ActivityRunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"activity_name": {
+										"value": "spBillingInfo",
+										"type": "String"
+									},
+									"datetime": {
+										"value": {
+											"value": "@utcnow()",
+											"type": "Expression"
+										},
+										"type": "DateTime"
+									},
+									"error_code": {
+										"value": {
+											"value": "@activity('spBillingInfo').error.errorCode",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"error_message": {
+										"value": {
+											"value": "@activity('spBillingInfo').error.Message",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"failure_type": {
+										"value": {
+											"value": "@activity('spBillingInfo').error.failureType",
+											"type": "Expression"
+										},
+										"type": "String"
+									},
+									"pipeline_guid": {
+										"value": {
+											"value": "@pipeline().RunId",
+											"type": "Expression"
+										},
+										"type": "Guid"
+									},
+									"pipeline_name": {
+										"value": {
+											"value": "@pipeline().Pipeline",
+											"type": "Expression"
+										},
+										"type": "String"
+									}
+								}
+							},
+							"linkedServiceName": {
+								"referenceName": "AzureSqlDatabase1",
+								"type": "LinkedServiceReference"
+							}
+						}
+					]
+				}
+			},
+			{
+				"name": "GetProperties",
+				"type": "Lookup",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"source": {
+						"type": "AzureSqlSource",
+						"sqlReaderQuery": "SELECT file_name,\n      container_name,\n      folder_name,\n      destination_table,\n      schema_name,\n      column_delimiter,\nrow_delimiter,\n      DIU,\nmapping,\n\t  CONCAT(schema_name,'.',destination_table) as schema_table\t  \n  FROM etl.tControlMetadata\n",
+						"queryTimeout": "02:00:00",
+						"partitionOption": "None"
+					},
+					"dataset": {
+						"referenceName": "DB_Movies_Parametrizated",
+						"type": "DatasetReference",
+						"parameters": {
+							"table_name": "tControlMetadata",
+							"schema_name": "etl"
+						}
+					},
+					"firstRowOnly": false
+				}
+			},
+			{
+				"name": "ErrorHandler_GetProperties",
+				"type": "SqlServerStoredProcedure",
+				"dependsOn": [
+					{
+						"activity": "GetProperties",
+						"dependencyConditions": [
+							"Failed"
+						]
+					}
+				],
+				"policy": {
+					"timeout": "0.12:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"storedProcedureName": "[etl].[spPopulateErrorHandlerAndPipelineInfo]",
+					"storedProcedureParameters": {
+						"activity": {
+							"value": "Lookup",
+							"type": "String"
+						},
+						"activity_guid": {
+							"value": {
+								"value": "@activity('GetProperties').ActivityRunId",
+								"type": "Expression"
+							},
+							"type": "Guid"
+						},
+						"activity_name": {
+							"value": "GetProperties",
+							"type": "String"
+						},
+						"datetime": {
+							"value": {
+								"value": "@utcnow()",
+								"type": "Expression"
+							},
+							"type": "DateTime"
+						},
+						"error_code": {
+							"value": {
+								"value": "@activity('GetProperties').error.errorCode",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"error_message": {
+							"value": {
+								"value": "@activity('GetProperties').error.Message",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"failure_type": {
+							"value": {
+								"value": "@activity('GetProperties').error.failureType",
+								"type": "Expression"
+							},
+							"type": "String"
+						},
+						"pipeline_guid": {
+							"value": {
+								"value": "@pipeline().RunId",
+								"type": "Expression"
+							},
+							"type": "Guid"
+						},
+						"pipeline_name": {
+							"value": {
+								"value": "@pipeline().Pipeline",
+								"type": "Expression"
+							},
+							"type": "String"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "AzureSqlDatabase1",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"variables": {
+			"Test": {
+				"type": "String"
+			}
+		},
+		"annotations": [],
+		"lastPublishTime": "2023-08-15T12:59:10Z"
+	},
+	"type": "Microsoft.DataFactory/factories/pipelines"
+}

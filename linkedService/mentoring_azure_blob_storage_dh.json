@@ -1,0 +1,18 @@
+{
+	"name": "mentoring_azure_blob_storage_dh",
+	"type": "Microsoft.DataFactory/factories/linkedservices",
+	"properties": {
+		"annotations": [],
+		"type": "AzureBlobStorage",
+		"typeProperties": {
+			"sasUri": {
+				"type": "AzureKeyVaultSecret",
+				"store": {
+					"referenceName": "mentoring_key_vault_dh",
+					"type": "LinkedServiceReference"
+				},
+				"secretName": "secret-mentoring-azure-blob-storage-dh"
+			}
+		}
+	}
+}
