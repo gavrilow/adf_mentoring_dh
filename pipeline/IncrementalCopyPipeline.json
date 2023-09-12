@@ -17,7 +17,7 @@
 				"typeProperties": {
 					"source": {
 						"type": "SqlServerSource",
-						"sqlReaderQuery": "select max(WatermarkValue) as oldWatermarkValue \nfrom dbo.watermarktable \nwhere TableName = 'dbo.Tickets' \ngroup by  TableName ",
+						"sqlReaderQuery": "select max(WatermarkValue) as oldWatermarkValue \nfrom dbo.watermarktable \nwhere TableName = 'data_source_table' \ngroup by  TableName ",
 						"queryTimeout": "02:00:00",
 						"partitionOption": "None"
 					},
