@@ -5,23 +5,9 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": {
-				"type": "AzureKeyVaultSecret",
-				"store": {
-					"referenceName": "AzureKeyVault1",
-					"type": "LinkedServiceReference"
-				},
-				"secretName": "SqlServerCinemaTicketsLink"
-			},
-			"userName": "EPAM\\Oleksandr_Kulbida1",
-			"password": {
-				"type": "AzureKeyVaultSecret",
-				"store": {
-					"referenceName": "AzureKeyVault1",
-					"type": "LinkedServiceReference"
-				},
-				"secretName": "SqlServerCinemaTicketsPassword"
-			}
+			"connectionString": "integrated security=True;data source=DMYTRO-PC;initial catalog=master",
+			"userName": "Dmytro-PC\\Dmytro",
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2OWU4Mjk2Zi00MzliLTRkZTktYjM0OC04NDhmNWI4Zjc5OGMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "selfHostedIR",
