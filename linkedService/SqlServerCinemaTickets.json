@@ -7,7 +7,7 @@
 		"typeProperties": {
 			"connectionString": "integrated security=True;data source=DMYTRO-PC;initial catalog=CinemaTickets",
 			"userName": "Dmytro-PC\\Dmytro",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkZDAzZGM0My0yNzMyLTQyMDEtYjNkYi1iYWU4NmY1M2ZhMmMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkMTQzNDNmMS05ZmE0LTRlNWEtYWUwMS1kMThhNDUyZTRhOWYiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "selfHostedIR",
