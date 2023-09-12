@@ -5,9 +5,9 @@
 		"annotations": [],
 		"type": "SqlServer",
 		"typeProperties": {
-			"connectionString": "integrated security=True;data source=DMYTRO-PC;initial catalog=master",
+			"connectionString": "integrated security=True;data source=DMYTRO-PC;initial catalog=CinemaTickets",
 			"userName": "Dmytro-PC\\Dmytro",
-			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiI2OWU4Mjk2Zi00MzliLTRkZTktYjM0OC04NDhmNWI4Zjc5OGMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
+			"encryptedCredential": "eyJDcmVkZW50aWFsSWQiOiJkZDAzZGM0My0yNzMyLTQyMDEtYjNkYi1iYWU4NmY1M2ZhMmMiLCJWZXJzaW9uIjoiMi4wIiwiQ2xhc3NUeXBlIjoiTWljcm9zb2Z0LkRhdGFQcm94eS5Db3JlLkludGVyU2VydmljZURhdGFDb250cmFjdC5DcmVkZW50aWFsU1UwNkNZMTQifQ=="
 		},
 		"connectVia": {
 			"referenceName": "selfHostedIR",
