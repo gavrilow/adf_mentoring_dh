@@ -8,42 +8,18 @@
 		"parameters": {
 			"tableName": {
 				"type": "string",
-				"defaultValue": "test"
+				"defaultValue": "watermarktable"
 			}
 		},
 		"annotations": [],
 		"type": "SqlServerTable",
 		"schema": [
 			{
-				"name": "CinemaCode",
-				"type": "nvarchar"
+				"name": "TableName",
+				"type": "varchar"
 			},
 			{
-				"name": "CinemaName",
-				"type": "nvarchar"
-			},
-			{
-				"name": "MovieId",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "TicketCount",
-				"type": "int",
-				"precision": 10
-			},
-			{
-				"name": "TicketPrice",
-				"type": "decimal",
-				"precision": 4,
-				"scale": 1
-			},
-			{
-				"name": "TransactionId",
-				"type": "nvarchar"
-			},
-			{
-				"name": "TransactionDt",
+				"name": "WatermarkValue",
 				"type": "datetime",
 				"precision": 23,
 				"scale": 3
